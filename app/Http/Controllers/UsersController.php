@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use App\Validators\UserValidators;
@@ -11,33 +12,33 @@ use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
     public function index(Request $request)
-{
-    $query = User::query();
+    {
+        $query = User::query();
 
-    // Apply filters as needed
-    if ($request->filled('name')) {
-        $query->where('name', 'like', '%' . $request->input('name') . '%');
+        // Apply filters as needed
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', $request->input('email'));
+        }
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            // Both 'from_date' and 'to_date' are provided
+            $query->whereBetween('created_at', [$request->input('from_date'), $request->input('to_date')]);
+        } elseif ($request->filled('from_date')) {
+            // Only 'from_date' is provided
+            $query->where('created_at', '>=', $request->input('from_date'));
+        } elseif ($request->filled('to_date')) {
+            // Only 'to_date' is provided
+            $query->where('created_at', '<=', $request->input('to_date'));
+        }
+
+        $users = $query->paginate(2); // You can adjust the number of items per page
+
+        return view('admin.users.index', compact('users'));
     }
-
-    if ($request->filled('email')) {
-        $query->where('email', $request->input('email'));
-    }
-
-    if ($request->filled('from_date') && $request->filled('to_date')) {
-        // Both 'from_date' and 'to_date' are provided
-        $query->whereBetween('created_at', [$request->input('from_date'), $request->input('to_date')]);
-    } elseif ($request->filled('from_date')) {
-        // Only 'from_date' is provided
-        $query->where('created_at', '>=', $request->input('from_date'));
-    } elseif ($request->filled('to_date')) {
-        // Only 'to_date' is provided
-        $query->where('created_at', '<=', $request->input('to_date'));
-    }
-
-    $users = $query->paginate(2); // You can adjust the number of items per page
-
-    return view('admin.users.index', compact('users'));
-}
 
 
     public function show($id)
@@ -62,9 +63,9 @@ class UsersController extends Controller
         }
 
         $data = [];
-        $data ['name'] = $request->name;
-        $data ['email'] = $request->email;
-        $data ['password'] = Hash::make($request->password);
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = Hash::make($request->password);
 
         $user = User::create($data);
         return redirect()->route('users.index');
