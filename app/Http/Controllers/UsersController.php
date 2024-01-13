@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Validators\UserValidators;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
 
 class UsersController extends Controller
 {
@@ -28,15 +30,19 @@ class UsersController extends Controller
 
     public function store(Request $request)
     {
-        print_r($request->all());die();
+        $validator = UserValidators::validate('createUser', $request->all());
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            return redirect()->route('users.create')->withErrors($errors)->withInput();
+        }
+
         $data = [];
         $data ['name'] = $request->name;
         $data ['email'] = $request->email;
-        $data ['password'] = bcrypt($request->password);
-        $user = User::create($data);
+        $data ['password'] = Hash::make($request->password);
 
-        //save user info
-        
+        $user = User::create($data);
         return redirect()->route('users.index');
     }
 
