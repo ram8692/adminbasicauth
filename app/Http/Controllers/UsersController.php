@@ -10,11 +10,35 @@ use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
-    public function index()
-    {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+    public function index(Request $request)
+{
+    $query = User::query();
+
+    // Apply filters as needed
+    if ($request->filled('name')) {
+        $query->where('name', 'like', '%' . $request->input('name') . '%');
     }
+
+    if ($request->filled('email')) {
+        $query->where('email', $request->input('email'));
+    }
+
+    if ($request->filled('from_date') && $request->filled('to_date')) {
+        // Both 'from_date' and 'to_date' are provided
+        $query->whereBetween('created_at', [$request->input('from_date'), $request->input('to_date')]);
+    } elseif ($request->filled('from_date')) {
+        // Only 'from_date' is provided
+        $query->where('created_at', '>=', $request->input('from_date'));
+    } elseif ($request->filled('to_date')) {
+        // Only 'to_date' is provided
+        $query->where('created_at', '<=', $request->input('to_date'));
+    }
+
+    $users = $query->paginate(2); // You can adjust the number of items per page
+
+    return view('admin.users.index', compact('users'));
+}
+
 
     public function show($id)
     {
