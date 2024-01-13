@@ -40,6 +40,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +48,8 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
+                        <td><a href="{{ route('users.edit', ['id' => $user->id]) }}">Edit</a><a href="{{ route('users.destroy', ['id' => $user->id]) }}">Delete</a></td>
+                        
                         <!-- Add more data columns as needed -->
                     </tr>
 

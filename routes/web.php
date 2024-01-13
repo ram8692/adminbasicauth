@@ -32,7 +32,7 @@ Route::get('/users/{id}', [UsersController::class, 'show'])->name('users.show');
 Route::get('/users/{id}/edit', [UsersController::class, 'edit'])->name('users.edit');
 
 // Update an existing user in the database
-Route::put('/users/{id}', [UsersController::class, 'update'])->name('users.update'); 
+Route::put('/users/{id}/update', [UsersController::class, 'update'])->name('users.update'); 
 
 // Delete a user
-Route::delete('/users/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
+Route::delete('/users/{id}/delete', [UsersController::class, 'destroy'])->name('users.destroy');

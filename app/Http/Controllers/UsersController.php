@@ -73,13 +73,21 @@ class UsersController extends Controller
 
 
     public function edit($id)
-    {
+    { //dd($id);
         $user = User::findOrFail($id);
-        return view('admin.users.edit', compact('user'));
+        //print_r($user->name);
+        return view('admin.users.update', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
+        $validator = UserValidators::validate('updateUser', $request->all());
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            return redirect()->route('users.edit', ['id' => $id])->withErrors($errors)->withInput();
+        }
+
         $user = User::findOrFail($id);
         $user->update($request->only(['name', 'email' /* other fields */]));
 
