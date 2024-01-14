@@ -17,6 +17,15 @@
     <div class="card-body">
         <div class="table-responsive">
             <div class="row">
+                @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
                 <form action="{{ route('users.index') }}" method="get">
 
                     <label for="name">Name:</label>
