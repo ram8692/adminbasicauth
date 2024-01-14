@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PermissionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
 
@@ -25,6 +26,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::middleware(['auth'])->group(function () {
     // Routes that require authentication for admin panel
 
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
     // Display a list of all users
     Route::get('/users', [UsersController::class, 'index'])->name('users.index');
 
@@ -45,4 +48,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Delete a user
     Route::delete('/users/{id}/delete', [UsersController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('/permissions', [PermissionsController::class, 'index'])->name('permission.index');
+
+    Route::post('/permission/save', [PermissionsController::class, 'store'])->name('permission.store');
 });

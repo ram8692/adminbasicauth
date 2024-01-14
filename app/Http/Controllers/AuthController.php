@@ -17,6 +17,7 @@ class AuthController extends Controller
   public function __construct()
   {
     $this->middleware('guest')->except('logout');
+    $this->maxAttempts = 5;
   }
 
   public function showLoginForm()
@@ -40,7 +41,7 @@ class AuthController extends Controller
       // Check if throttling limit is exceeded
       if ($this->hasTooManyLoginAttempts($request)) {
         $throttleKey = $this->throttleKey($request);
-        $seconds = RateLimiter::instance()->availableIn($throttleKey);
+        $seconds = RateLimiter::availableIn($throttleKey);
 
         $errors['throttle'] = trans('auth.throttle', ['seconds' => $seconds]);
       }
@@ -102,10 +103,6 @@ class AuthController extends Controller
 
     $this->clearLoginAttempts($request);
 
-    if ($response = $this->authenticated($request, Auth::user())) {
-      return $response;
-    }
-
     // Customize the route you want to redirect to after a successful login
     return redirect()->route('users.index'); // Replace 'users.index' with your desired route
   }
@@ -122,4 +119,15 @@ class AuthController extends Controller
     // Use the RateLimiter instance to clear the login attempts
     RateLimiter::clear($throttleKey);
   }
+
+  public function logout(Request $request)
+    {
+      Auth::guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 }
