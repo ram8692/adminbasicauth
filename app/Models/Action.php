@@ -14,7 +14,7 @@ class Action extends Model
         return $this->belongsToMany(Role::class, 'role_action_mapping');
     }
 
-    public function rolePermissionMappings()
+    public function roleActionMappings()
     {
         return $this->hasMany(RoleActionMapping::class);
     }
