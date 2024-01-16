@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\Role;
 use App\Validators\UserValidators;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
 
 class UsersController extends Controller
 {
@@ -35,7 +37,7 @@ class UsersController extends Controller
             $query->where('created_at', '<=', $request->input('to_date'));
         }
 
-        $users = $query->paginate(2); // You can adjust the number of items per page
+        $users = $query->paginate(10); // You can adjust the number of items per page
 
         return view('admin.users.index', compact('users'));
     }
@@ -49,7 +51,8 @@ class UsersController extends Controller
 
     public function create()
     {
-        return view('admin.users.create');
+        $roles = Role::all();
+        return view('admin.users.create',compact('roles'));
     }
 
 
@@ -65,6 +68,7 @@ class UsersController extends Controller
         $data = [];
         $data['name'] = $request->name;
         $data['email'] = $request->email;
+        $data['role_id'] = $request->role_id;
         $data['password'] = Hash::make($request->password);
 
         $user = User::create($data);

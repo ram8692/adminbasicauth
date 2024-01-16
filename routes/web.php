@@ -16,6 +16,10 @@ use App\Http\Controllers\UsersController;
 |
 */
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // Display the login form
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 

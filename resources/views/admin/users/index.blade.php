@@ -57,6 +57,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -65,6 +66,7 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>{{ $user->role->name }}</td>
                         <td><a href="{{ route('users.edit', ['id' => $user->id]) }}">Edit</a><a href="{{ route('users.destroy', ['id' => $user->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $user->id }}').submit();">Delete</a><form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', ['id' => $user->id]) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
